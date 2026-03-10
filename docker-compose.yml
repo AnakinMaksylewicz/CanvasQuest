@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: canvasquest_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: canvasquest
+      POSTGRES_PASSWORD: canvasquest_pw
+      POSTGRES_DB: canvasquest
+    ports:
+      - "5432:5432"
+    volumes:
+      - canvasquest_pgdata:/var/lib/postgresql/data
+
+volumes:
+  canvasquest_pgdata:
