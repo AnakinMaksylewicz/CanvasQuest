@@ -1,10 +1,20 @@
-## Branch naming convention
-Development *should* be on feature branch.
+## \## Branch naming convention
 
-Format: feature/[ticket]-[name]
+## Development \*should\* be on feature branch.
 
-Examples:
-- feature/CQ-02-auth-api
-- feature/CQ-05-token-encryption
+## 
 
-Strongly suggest not commiting directly to main.
+## Format: feature/\[ticket]-\[name]
+
+## 
+
+## Examples:
+
+## \- feature/CQ-02-auth-api
+
+## \- feature/CQ-05-token-encryption
+
+## 
+
+## Strongly suggest not commiting directly to main.
+
