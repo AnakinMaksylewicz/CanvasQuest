@@ -1,4 +1,4 @@
-\# CanvasQuest – Test Results (Sprint 1)
+# CanvasQuest – Test Results (Sprint 1)
 
 
 
@@ -23,19 +23,12 @@
 | TC-08 | Pass | Completion endpoint working |
 
 
-
-\---
-
-
-
-\## Summary
-
+# Summary
 
 
 All test cases were executed successfully.  
 
 No critical issues were identified.
-
 
 
 The system meets Sprint 1 requirements for assignment tracking and progress updates.
