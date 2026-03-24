@@ -3,8 +3,8 @@
     {
       "id": "demo-001",
       "title": "OS Project 3 Checkpoint",
-      "course": "COP4600 Operating Systems",
-      "due_at": "2026-03-05T23:59:00Z",
+      "course_name": "COP4600 Operating Systems",
+      "due_at": "2026-03-24T23:59:00Z",
       "is_completed": false,
       "source": "demo",
       "canvas_assignment_id": null,
@@ -14,7 +14,7 @@
     {
       "id": "demo-002",
       "title": "Sprint 0 Daily Scrum Log Submission",
-      "course": "CEN3031 Software Engineering",
+      "course_name": "CEN3031 Software Engineering",
       "due_at": "2026-03-06T23:59:00Z",
       "is_completed": true,
       "source": "demo",
@@ -25,7 +25,7 @@
     {
       "id": "demo-003",
       "title": "Sprint 0 Retrospective Artifact",
-      "course": "CEN3031 Software Engineering",
+      "course_name": "CEN3031 Software Engineering",
       "due_at": "2026-03-07T23:59:00Z",
       "is_completed": false,
       "source": "demo",
@@ -36,7 +36,7 @@
     {
       "id": "demo-004",
       "title": "React Dashboard Layout Draft",
-      "course": "CanvasQuest Internal",
+      "course_name": "CanvasQuest Internal",
       "due_at": "2026-03-04T18:00:00Z",
       "is_completed": true,
       "source": "demo",
@@ -47,7 +47,7 @@
     {
       "id": "demo-005",
       "title": "Discrete Structures Homework",
-      "course": "COT3100 Discrete Structures",
+      "course_name": "COT3100 Discrete Structures",
       "due_at": "2026-03-08T23:59:00Z",
       "is_completed": false,
       "source": "demo",
@@ -58,7 +58,7 @@
     {
       "id": "demo-006",
       "title": "Engineering Innovation Reflection",
-      "course": "EGN4643 Engineering Innovation",
+      "course_name": "EGN4643 Engineering Innovation",
       "due_at": "2026-03-09T23:59:00Z",
       "is_completed": false,
       "source": "demo",

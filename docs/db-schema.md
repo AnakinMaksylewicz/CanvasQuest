@@ -26,6 +26,7 @@ FK means foreign key, which is a column that points to another table's primary k
 - is_completed (boolean)
 - completed_at (nullable timestamp)
 - points_possible (nullable)
+- xp-value (int)
 - created_at
 
 ## user_progress
