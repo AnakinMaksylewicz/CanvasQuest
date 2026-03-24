@@ -3,7 +3,7 @@ This is the normalized assignment format returned to the UI by CanvasQuest
 # Assignment fields
 - id: string (unique internal ID; demo IDs allowed)
 - title: string
-- course: string
+- course_name: string
 - due_at: ISO-8601 datetime string (UTC recommended)
 - is_completed: boolean
 - source: "demo" | "canvas"
