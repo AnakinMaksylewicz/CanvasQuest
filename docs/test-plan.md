@@ -1,4 +1,4 @@
-\\# Test Plan
+# Test Plan
 
 
 
@@ -14,7 +14,7 @@ Objective: Verify that the system for assignments works correctly including load
 
 
 
-\\# Scope
+# Scope
 
 
 
@@ -22,19 +22,19 @@ The following features will be tested:
 
 
 
-\\- Dashboard loading
+- Dashboard loading
 
 
 
-\\- Assignment display
+- Assignment display
 
 
 
-\\- Assignment completion
+- Assignment completion
 
 
 
-\\- Progress calculation
+- Progress calculation
 
 
 
