@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {pool} from "@/src/lib/db";
-
+import {getDemoUserId} from "@/src/lib/demoUser";
 //ONCE WE IMPLEMENT AUTH, we will need to get current user
 
 
@@ -23,18 +23,13 @@ function getWeekBounds() {
 export async function GET() {
     try{
         
-        //When auth is implemented, we replace this entire "get user" block with whatever function we'll use to get curr user
-        const userResult = await pool.query(
-            'SELECT id from users where email = $1 LIMIT 1',
-            ["demo@canvasquest.local"] 
-        );
+        //When auth is implemented, we replace this with whatever function gets the current user's ID, but for now we just get the demo user ID
+        const userId = await getDemoUserId();
 
-        if (userResult.rows.length == 0) {
+        if (userId === null) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        const userId = userResult.rows[0].id;
-        
         const { monday, sunday } = getWeekBounds();
 
         //This query selects all assignments for the user that are due within the current week, earliest due date to latest
