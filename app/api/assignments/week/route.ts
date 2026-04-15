@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {pool} from "@/src/lib/db";
 import {getDemoUserId} from "@/src/lib/demoUser";
+import { buildGamificationState } from "@/src/lib/gamification";
 //ONCE WE IMPLEMENT AUTH, we will need to get current user
 
 
@@ -18,6 +19,41 @@ function getWeekBounds() {
   sunday.setHours(23, 59, 59, 999);
 
   return { monday, sunday };
+}
+
+async function getWeeklyProgress(userId: number, monday: Date, sunday: Date) {
+    const progressResult = await pool.query(
+        `
+        SELECT
+            COUNT(*)::int AS total,
+            COUNT(*) FILTER (WHERE is_completed = true)::int AS completed
+        FROM assignments
+        WHERE user_id = $1
+            AND due_at >= $2
+            AND due_at <= $3
+        `,
+        [userId, monday.toISOString(), sunday.toISOString()]
+    );
+
+    return progressResult.rows[0];
+}
+
+async function getUserGamificationState(userId: number) {
+    const progressResult = await pool.query(
+        `
+        SELECT xp_total, level
+        FROM user_progress
+        WHERE user_id = $1
+        LIMIT 1
+        `,
+        [userId]
+    );
+
+    if (progressResult.rows.length === 0) {
+        return buildGamificationState(0);
+    }
+
+    return buildGamificationState(progressResult.rows[0].xp_total);
 }
 
 export async function GET() {
@@ -55,22 +91,12 @@ export async function GET() {
         );
 
         //This query counts all assignments in the week as "total" and all completed assignments as "completed", then returns
-        const progressResult = await pool.query(
-            `
-            SELECT
-            COUNT(*)::int AS total,
-            COUNT(*) FILTER (WHERE is_completed = true)::int AS completed
-            FROM assignments
-            WHERE user_id = $1
-            AND due_at >= $2
-            AND due_at <= $3
-            `,
-            [userId, monday.toISOString(), sunday.toISOString()]
-        );
-
+        const progress = await getWeeklyProgress(userId, monday, sunday);
+        const gamification = await getUserGamificationState(userId);
         return NextResponse.json({
             assignments: assignmentsResult.rows,
-            progress: progressResult.rows[0]
+            progress: progress,
+            gamification: gamification
         });
     }
     catch(error){
