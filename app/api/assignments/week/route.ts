@@ -90,7 +90,6 @@ export async function GET() {
             [userId, monday.toISOString(), sunday.toISOString()]
         );
 
-        //This query counts all assignments in the week as "total" and all completed assignments as "completed", then returns
         const progress = await getWeeklyProgress(userId, monday, sunday);
         const gamification = await getUserGamificationState(userId);
         return NextResponse.json({
