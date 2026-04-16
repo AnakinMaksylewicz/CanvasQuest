@@ -1,4 +1,4 @@
-CanvasQuest DB schema (draft)
+# CanvasQuest DB schema (draft)
 PK means primary key, or the column that identifies each row in a table, no duplicates allowed.
 FK means foreign key, which is a column that points to another table's primary key. creates relationships between rows
 
@@ -40,3 +40,13 @@ FK means foreign key, which is a column that points to another table's primary k
 - users 1—many assignments
 - users 1—1 user_progress
 - users 1—1 (active) canvas_tokens
+
+## Gamification notes
+- completing an assignment adds that assingment's `xp_value` to `user_progress.xp_total`
+- Marking a completed assignment incomplete subtracts that assignment's `xp_value` from `user_progress.xp_total`
+- The API prevents negative XP by clamping the result to 0
+- Level is derived from total XP:
+  - Level 1: 0–99 XP
+  - Level 2: 100–199 XP
+  - Level 3: 200–349 XP
+  - Level 4: 350+ XP

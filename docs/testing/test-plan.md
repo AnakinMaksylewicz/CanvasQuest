@@ -56,3 +56,12 @@ Success Criteria: Assignments load correctly, database updates, progress accurat
 
 
 
+## Sprint 2 Additions
+
+The following Sprint 2 gamification behavior should also be tested:
+
+- XP increases when an assignment changes from incomplete to complete.
+- XP decreases when an assignment changes from complete to incomplete.
+- XP does not go below 0.
+- Level is recalculated when XP changes.
+- Character/icon state matches the user's current level.
