@@ -63,12 +63,28 @@ async function main() {
         a.title,
         a.due_at,
         a.is_completed,
-        a.is_completed ? new Date().toISOString() : null,
+        a.is_completed ? (a.completed_at ?? new Date().toISOString()) : null,
         a.points_possible,
         a.xp_value,
       ]
     );
   }
+
+  const seededXpTotal = data.assignments.reduce((sum, assignment) => {
+    return assignment.is_completed ? sum + assignment.xp_value : sum;
+  }, 0);
+
+  await pool.query(
+    `
+    INSERT INTO user_progress (user_id, xp_total, level, streak_count, last_active_date)
+    VALUES ($1, $2, $3, 0, CURRENT_DATE)
+    ON CONFLICT (user_id) DO UPDATE SET
+      xp_total = EXCLUDED.xp_total,
+      level = EXCLUDED.level,
+      last_active_date = CURRENT_DATE
+    `,
+    [userId, seededXpTotal, calculateLevel(seededXpTotal)]
+  );
 
   console.log("Seed complete.");
   await pool.end();
