@@ -82,3 +82,36 @@ Steps:
 2. Inspect response
 
 Expected Result: Returns updated assignment
+
+# TC-09: XP Updates on Assignment Completion
+
+Description: Verify XP changes when an assignment is marked complete or incomplete.
+
+Steps:
+1. Load the dashboard.
+2. Note the current XP total.
+3. Mark an incomplete assignment complete.
+4. Observe the returned gamification data or dashboard display.
+
+Expected Result: XP total increases by the assignment's `xp_value`.
+
+# TC-10: XP Does Not Double Count
+
+Description: Verify repeated toggling does not incorrectly duplicate XP.
+
+Steps:
+1. Mark an assignment complete.
+2. Mark the same assignment incomplete.
+3. Mark it complete again.
+
+Expected Result: XP increases when completed and decreases when marked incomplete. The same assignment does not permanently add XP multiple times.
+
+# TC-11: Level and Character Update
+
+Description: Verify the level and character match the user's XP total.
+
+Steps:
+1. Complete enough assignments to cross a level threshold.
+2. Check the returned `gamification` object.
+
+Expected Result: `level` changes according to the XP thresholds, and `character` matches the current level.
