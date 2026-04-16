@@ -73,8 +73,8 @@ export async function POST(request: NextRequest) {
         const updateAssignmentResult = await pool.query(
             `
             UPDATE assignments
-                SET is_completed = NOT is_completed
-                completed_at = CASE WHEN NOT is_completed THEN NOW() ELSE NULL 
+                SET is_completed = NOT is_completed,
+                completed_at = CASE WHEN is_completed = false THEN NOW() ELSE NULL 
                 END
             WHERE id = $1 AND user_id = $2
             RETURNING id, is_completed, completed_at, xp_value
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         const newXpTotal = Math.max(0, currentXpTotal + xpChange);
         const newLevel = calculateLevel(newXpTotal);
 
-        const updatedProgressResult = await pool.query(
+        await pool.query(
             `
             INSERT INTO user_progress (user_id, xp_total, level, streak_count, last_active_date)
             VALUES ($1, $2, $3, 0, CURRENT_DATE)
@@ -104,7 +104,6 @@ export async function POST(request: NextRequest) {
                 xp_total = EXCLUDED.xp_total,
                 level = EXCLUDED.level,
                 last_active_date = CURRENT_DATE
-            RETURNING xp_total, level, streak_count, last_active_date
             `,
             [userId, newXpTotal, newLevel]
         );
