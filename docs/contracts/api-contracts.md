@@ -24,13 +24,24 @@ Return JSON example:
   "progress": {
     "total": 5,
     "completed": 2
+  },
+  "gamification": {
+    "xp_total": 30,
+    "level": 1,
+    "next_level_xp": 100,
+    "xp_to_next_level": 70,
+    "character": {
+      "name": "Sapling",
+      "icon": "🌱",
+      "description": "Start completing assignments to grow"
+    }
   }
 }
 
 # Mark assignment complete API response
 
 ## POST /api/assignments/complete
-Toggles one assignment's completion status
+Toggles one assignment's completion status for the given user. This route also updates XP, level, and character state.
 
 #Request body
 {
@@ -45,5 +56,24 @@ Return JSON example:
         "id": "demo-001"
         "is_completed" = true,
         "completed_at": "2026-03-10T12:34:56.789Z"
+    },
+    "progress": {
+      "total": 6,
+      "completed": 3
+    },
+    "gamification": {
+      "xp_total": 80,
+      "level": 1,
+      "next_level_xp": 100,
+      "xp_to_next_level": 20,
+      "character": {
+        "name": "Sapling",
+        "icon": "🌱",
+        "description": "Start completing assignments to grow."
+      }
     }
 }
+```
+
+## Current demo-user limitation
+These routes currently use the seeded demo user (`demo@canvasquest.local`). Once authentication is implemented, the demo-user lookup should be replaced with authenticated current-user logic.
