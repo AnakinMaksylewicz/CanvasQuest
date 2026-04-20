@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,13 +12,13 @@ export default function LoginPage() {
   
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -26,10 +26,9 @@ export default function LoginPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Invalid email or password");
+        throw new Error(data.error || "Failed to create account");
       }
 
-      // Success
       router.push("/dashboard");
       
     } catch (err: any) {
@@ -48,11 +47,11 @@ export default function LoginPage() {
             CanvasQuest
           </h1>
           <p className="text-gray-500">
-            Log in to track your weekly quests.
+            Create an account to start your journey.
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleSignup} className="space-y-6">
           {error && (
             <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm text-center font-medium">
               {error}
@@ -70,7 +69,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
-              placeholder="demo@canvasquest.local"
+              placeholder="you@ufl.edu"
               disabled={loading}
             />
           </div>
@@ -94,17 +93,17 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-600 hover:underline font-semibold">
-              Sign up here
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-600 hover:underline font-semibold">
+              Log in here
             </Link>
           </p>
         </div>

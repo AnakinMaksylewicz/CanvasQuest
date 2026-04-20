@@ -3,21 +3,33 @@
 import { useState, useEffect } from "react";
 import AssignmentCard from "../../src/components/AssignmentCard";
 import ProgressBar from "../../src/components/ProgressBar";
+import CanvasConnect from "../../src/components/CanvasConnect";
+import CharacterWidget from "../../src/components/CharacterWidget";
 
 export default function DashboardPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [progress, setProgress] = useState({ total: 0, completed: 0 });
+  const [gamification, setGamification] = useState({ xp_total: 0, level: 1 });
+  
   const [loading, setLoading] = useState(true);
 
-  // 1. Fetch data on load
-  const fetchWeekData = async () => {
+  const fetchDashboardData = async () => {
     try {
       const res = await fetch("/api/assignments/week");
+      
+      if (res.status === 401) {
+        window.location.href = "/login"; // Redirect unauthenticated users
+        return;
+      }
+
       if (!res.ok) throw new Error("Failed to fetch data");
+      
       const data = await res.json();
       
-      setAssignments(data.assignments);
-      setProgress(data.progress);
+      setAssignments(data.assignments || []);
+      setProgress(data.progress || { total: 0, completed: 0 });
+      setGamification(data.gamification || { xp_total: 0, level: 1 });
+      
     } catch (error) {
       console.error(error);
     } finally {
@@ -26,68 +38,96 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    fetchWeekData();
+    fetchDashboardData();
   }, []);
 
-  // 2. Handle the checkbox toggle
   const handleToggleComplete = async (id: string, currentStatus: boolean) => {
     const isNowComplete = !currentStatus;
 
-    // OPTIMISTIC UPDATE: Update UI instantly before the DB responds
-    setAssignments(prev => prev.map(a => 
-      a.id === id ? { ...a, is_completed: isNowComplete } : a
-    ));
-    setProgress(prev => ({
-      total: prev.total,
-      completed: prev.completed + (isNowComplete ? 1 : -1)
-    }));
+    setAssignments(prev => prev.map(a => a.id === id ? { ...a, is_completed: isNowComplete } : a));
 
     try {
-      // Send the update to the database using the POST route
       const res = await fetch("/api/assignments/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
 
-      if (!res.ok) throw new Error("Failed to update status");
+      if (!res.ok) throw new Error("API failed");
       
+      const updatedData = await res.json();
+      
+      setProgress(updatedData.progress);
+      setGamification(updatedData.gamification);
+
     } catch (error) {
-      console.error("API error, reverting UI:", error);
-      // Revert the UI if the backend failed for some reason
-      fetchWeekData(); 
+      console.error("Reverting UI due to error:", error);
+      fetchDashboardData(); // Revert on failure
     }
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen p-8 flex items-center justify-center">
-        <p className="text-xl font-bold animate-pulse">Loading CanvasQuest...</p>
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen p-8 max-w-3xl mx-auto">
-      <h1 className="text-4xl font-bold mb-2">Weekly Dashboard</h1>
-      <p className="text-gray-600 mb-8">Stay on track. Level up.</p>
-      
-      <ProgressBar completed={progress.completed} total={progress.total} />
-
-      <div className="space-y-4">
-        {assignments.length === 0 ? (
-          <div className="text-center py-12 border-2 border-dashed rounded-lg">
-            <p className="text-gray-500">No assignments due this week! 🎉</p>
+    <main className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        
+        <header className="mb-8 flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">CanvasQuest</h1>
+            <p className="text-lg text-gray-500">Stay on track. Level up your semester.</p>
           </div>
-        ) : (
-          assignments.map((assignment) => (
-            <AssignmentCard 
-              key={assignment.id} 
-              assignment={assignment} 
-              onToggle={handleToggleComplete} 
-            />
-          ))
-        )}
+          <button 
+            onClick={() => window.location.href = '/api/auth/logout'}
+            className="text-sm font-medium text-gray-500 hover:text-gray-900 underline"
+          >
+            Logout
+          </button>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column: Assignments */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <ProgressBar completed={progress.completed} total={progress.total} />
+              
+              <h2 className="text-xl font-bold text-gray-800 mb-4 mt-8">This Week's Quests</h2>
+              <div className="space-y-3">
+                {assignments.length === 0 ? (
+                  <div className="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                    <span className="text-4xl block mb-2">🎉</span>
+                    <p className="text-gray-500 font-medium">No assignments due this week!</p>
+                  </div>
+                ) : (
+                  assignments.map((assignment) => (
+                    <AssignmentCard 
+                      key={assignment.id} 
+                      assignment={assignment} 
+                      onToggle={handleToggleComplete} 
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Gamification & Settings */}
+          <div className="space-y-6 flex flex-col">
+            <div className="flex-1">
+              <CharacterWidget xpTotal={gamification.xp_total} level={gamification.level} />
+            </div>
+            
+            <CanvasConnect onConnected={fetchDashboardData} />
+          </div>
+
+        </div>
       </div>
     </main>
   );
