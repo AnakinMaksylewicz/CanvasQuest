@@ -10,8 +10,44 @@ export default function DashboardPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [progress, setProgress] = useState({ total: 0, completed: 0 });
   const [gamification, setGamification] = useState({ xp_total: 0, level: 1 });
+
+  const [isSyncing, setIsSyncing] = useState(false);
   
   const [loading, setLoading] = useState(true);
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+   try {
+     const res = await fetch("/api/assignments/sync", { method: "POST" });
+     const data = await res.json();
+
+     if (!res.ok) throw new Error(data.error || "Sync failed");
+
+      // Re-fetch the weekly assignments to show the new ones
+      await fetchDashboardData();
+      alert(`GatorCloud Sync Complete: Found ${data.count ?? 0} assignments.`);
+   } catch (err: any) {
+     console.error(err);
+      alert("Canvas Sync Error: " + err.message);
+    } finally {
+     setIsSyncing(false);
+    }
+  };
+
+  const handleLogout = async () => {
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    
+    if (res.ok) {
+      // If the backend cleared the session successfully, redirect to login
+      window.location.href = '/login'; 
+    } else {
+      console.error("Failed to log out on the backend.");
+    }
+  } catch (error) {
+    console.error("Error triggering logout:", error);
+  }
+};
 
   const fetchDashboardData = async () => {
     try {
@@ -83,12 +119,25 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">CanvasQuest</h1>
             <p className="text-lg text-gray-500">Stay on track. Level up your semester.</p>
           </div>
-          <button 
-            onClick={() => window.location.href = '/api/auth/logout'}
-            className="text-sm font-medium text-gray-500 hover:text-gray-900 underline"
-          >
-            Logout
-          </button>
+          <div className="flex flex-col items-end gap-2">
+            <button 
+              onClick={handleSync}
+              disabled={isSyncing}
+              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all shadow-sm ${
+                isSyncing 
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
+                  : "bg-blue-600 text-white hover:bg-blue-700 active:scale-95"
+              }`}
+            >
+              {isSyncing ? "🔄 Syncing..." : "📥 Sync Canvas"}
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="text-sm font-medium text-gray-500 hover:text-gray-900 underline"
+            >
+              Logout
+            </button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
